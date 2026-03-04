@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+
 
 interface Task {
   id: number;
@@ -89,6 +91,7 @@ export default function TasksPage() {
               alignItems: 'center'
             }}
           >
+            <Link href={`/tasks/${task.id}`} style={{ flexGrow: 1, textDecoration: 'none' }}>
             <span style={{ 
               textDecoration: task.completed ? 'line-through' : 'none', 
               color: task.completed ? 'gray' : 'black',
@@ -96,6 +99,7 @@ export default function TasksPage() {
             }}>
               {task.name}
             </span>
+            </Link>
             
             <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
               <input 
