@@ -1,37 +1,12 @@
 [
   {
-    "id": 1,
-    "name": "Nákup na víkend",
+    "id": 7,
+    "name": "aaaa",
     "completed": false
   },
   {
-    "id": 2,
-    "name": "Uklidit pokoj",
-    "completed": true
-  },
-  {
-    "id": 3,
-    "name": "Udělat úkol do Reactu",
-    "completed": true
-  },
-  {
-    "id": 4,
-    "name": "Udělat úkol do Reactu",
-    "completed": true
-  },
-  {
-    "id": 5,
-    "name": "gdndm",
-    "completed": true
-  },
-  {
-    "id": 6,
-    "name": "funguje nefunguje mi to",
-    "completed": true
-  },
-  {
-    "id": 7,
-    "name": "aaaa",
+    "id": 8,
+    "name": "aaaaaaaaaa",
     "completed": false
   }
 ]

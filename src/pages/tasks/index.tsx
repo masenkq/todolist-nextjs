@@ -49,6 +49,17 @@ export default function TasksPage() {
     }
   };
 
+  const deleteTask = async (id: number) => {
+    const response = await fetch(`/api/tasks/${id}`, {
+      method: 'DELETE',
+    });
+
+    // Pokud backend vrátil 200 OK, stáhneme si nový seznam úkolů
+    if (response.ok) {
+      fetchTasks();
+    }
+  };
+
   return (
     <div style={{ maxWidth: '600px', margin: '40px auto', fontFamily: 'sans-serif' }}>
       <h1>Můj Todolist</h1>
@@ -74,21 +85,39 @@ export default function TasksPage() {
               padding: '15px', 
               borderBottom: '1px solid #eee',
               display: 'flex',
-              justifyContent: 'space-between', 
+              justifyContent: 'space-between',
               alignItems: 'center'
             }}
           >
-            <span style={{ textDecoration: task.completed ? 'line-through' : 'none', color: task.completed ? 'gray' : 'black' }}>
+            <span style={{ 
+              textDecoration: task.completed ? 'line-through' : 'none', 
+              color: task.completed ? 'gray' : 'black',
+              flexGrow: 1 
+            }}>
               {task.name}
             </span>
             
-            {/*Přidán interaktivní checkbox */}
-            <input 
-              type="checkbox" 
-              checked={task.completed} 
-              onChange={() => toggleTask(task.id, task.completed)}
-              style={{ transform: 'scale(1.5)', cursor: 'pointer' }} 
-            />
+            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+              <input 
+                type="checkbox" 
+                checked={task.completed} 
+                onChange={() => toggleTask(task.id, task.completed)}
+                style={{ transform: 'scale(1.5)', cursor: 'pointer' }}
+              />
+              {/* NOVÉ: Tlačítko pro mazání */}
+              <button 
+                onClick={() => deleteTask(task.id)}
+                style={{ 
+                  background: 'none', 
+                  border: 'none',  
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '16px'
+                }}
+              >
+                🗑️
+              </button>
+            </div>
           </li>
         ))}
       </ul>
