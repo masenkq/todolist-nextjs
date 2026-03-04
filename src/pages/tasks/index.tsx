@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// 1. Definice datového typu pro TypeScript
 interface Task {
   id: number;
   name: string;
@@ -8,24 +7,57 @@ interface Task {
 }
 
 export default function TasksPage() {
-  // 2. Lokální stav (State) pro uložení úkolů
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTaskName, setNewTaskName] = useState("");
 
-  // 3. Efekt (Side-effect) pro stažení dat z našeho API
-  useEffect(() => {
-    // Asynchronní HTTP GET požadavek na náš backend
+  const fetchTasks = () => {
     fetch('/api/tasks')
-      .then((response) => response.json()) // Převod HTTP odpovědi na JSON
-      .then((data) => setTasks(data));     // Uložení dat do lokálního stavu
-  }, []); // Prázdné pole závislostí = spustí se pouze při prvním načtení komponenty (Mount)
+      .then((response) => response.json())
+      .then((data) => setTasks(data));
+  };
 
-  // 4. Vykreslení (Render) uživatelského rozhraní
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  // Funkce pro odeslání nového úkolu (HTTP POST)
+  const addTask = async () => {
+    // Zabráníme odeslání prázdného řetězce
+    if (!newTaskName.trim()) return;
+
+    const response = await fetch('/api/tasks', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: newTaskName }),
+    });
+
+    if (response.ok) {
+      setNewTaskName(""); // Vyčištění textového pole
+      fetchTasks(); // Aktualizace výpisu úkolů
+    }
+  };
+
   return (
     <div style={{ maxWidth: '600px', margin: '40px auto', fontFamily: 'sans-serif' }}>
       <h1>Můj Todolist</h1>
       
+      {/* Formulář pro přidání úkolu */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        <input 
+          type="text" 
+          value={newTaskName}
+          onChange={(e) => setNewTaskName(e.target.value)}
+          placeholder="Zadejte nový úkol..."
+          style={{ flexGrow: 1, padding: '8px' }}
+        />
+        <button onClick={addTask} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+          Přidat úkol
+        </button>
+      </div>
+
       <ul style={{ listStyleType: 'none', padding: 0 }}>
-        {/* Průchod polem úkolů a jejich vykreslení */}
         {tasks.map((task) => (
           <li 
             key={task.id} 
@@ -37,7 +69,6 @@ export default function TasksPage() {
               alignItems: 'center'
             }}
           >
-            {/* Pokud je úkol hotový (completed: true), text se přeškrtne */}
             <span style={{ textDecoration: task.completed ? 'line-through' : 'none', color: task.completed ? 'gray' : 'black' }}>
               {task.name}
             </span>

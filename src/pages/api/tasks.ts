@@ -34,8 +34,7 @@ export default async function handler(
       const tasks = JSON.parse(fileContents);
 
       // Vygenerujeme unikátní ID (o 1 větší než největší stávající)
-      const newId = tasks.length > 0 ? Math.max(...tasks.map((t: any) => t.id)) + 1 : 1;
-      const newTask = {
+      const newId = tasks.length > 0 ? Math.max(...tasks.map((t: { id: number }) => t.id)) + 1 : 1;      const newTask = {
         id: newId,
         name: name,
         completed: false // Nový úkol je automaticky nedokončený
@@ -45,7 +44,7 @@ export default async function handler(
       tasks.push(newTask);
       await fs.writeFile(dataPath, JSON.stringify(tasks, null, 2));
 
-      // Úspěšná odpověď se statusem 201 (Created)
+      // Úspěšná odpověď se statusem 201 kdyz se ukol zapise uspesne
       res.status(201).json(newTask);
     } catch (error) {
       res.status(500).json({ error: "Chyba při zápisu do souboru" });
