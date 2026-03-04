@@ -20,22 +20,32 @@ export default function TasksPage() {
     fetchTasks();
   }, []);
 
-  // Funkce pro odeslání nového úkolu (HTTP POST)
   const addTask = async () => {
-    // Zabráníme odeslání prázdného řetězce
     if (!newTaskName.trim()) return;
 
     const response = await fetch('/api/tasks', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: newTaskName }),
     });
 
     if (response.ok) {
-      setNewTaskName(""); // Vyčištění textového pole
-      fetchTasks(); // Aktualizace výpisu úkolů
+      setNewTaskName("");
+      fetchTasks();
+    }
+  };
+
+  // NOVÁ FUNKCE: Odeslání PUT požadavku na změnu stavu
+  const toggleTask = async (id: number, currentStatus: boolean) => {
+    // Pošleme požadavek na konkrétní úkol (např. /api/tasks/2)
+    const response = await fetch(`/api/tasks/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ completed: !currentStatus }), // Pošleme opačný stav, než jaký je teď
+    });
+
+    if (response.ok) {
+      fetchTasks(); // Pokud se to na backendu uložilo, stáhneme a vykreslíme nová data
     }
   };
 
@@ -43,7 +53,6 @@ export default function TasksPage() {
     <div style={{ maxWidth: '600px', margin: '40px auto', fontFamily: 'sans-serif' }}>
       <h1>Můj Todolist</h1>
       
-      {/* Formulář pro přidání úkolu */}
       <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
         <input 
           type="text" 
@@ -65,14 +74,21 @@ export default function TasksPage() {
               padding: '15px', 
               borderBottom: '1px solid #eee',
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: 'space-between', 
               alignItems: 'center'
             }}
           >
             <span style={{ textDecoration: task.completed ? 'line-through' : 'none', color: task.completed ? 'gray' : 'black' }}>
               {task.name}
             </span>
-            <span>{task.completed ? '✅' : '❌'}</span>
+            
+            {/*Přidán interaktivní checkbox */}
+            <input 
+              type="checkbox" 
+              checked={task.completed} 
+              onChange={() => toggleTask(task.id, task.completed)}
+              style={{ transform: 'scale(1.5)', cursor: 'pointer' }} 
+            />
           </li>
         ))}
       </ul>
